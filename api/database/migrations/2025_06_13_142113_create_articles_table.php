@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('content');
+            $table->Text('content');
             $table->unsignedBigInteger('category_id')
                 ->constrained('categories')
                 ->onDelete('cascade');
