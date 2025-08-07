@@ -16,16 +16,16 @@ class Article extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function categories()
     {
-        return $this->belongsTo(Category::class, 'category_id','id');
+        return $this->belongsTo(Category::class);
     }
 
     public function tags ()
     {
-        return $this->belongsToMany(Tags::class, 'article_tag', 'article_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'article_tag', 'article_id', 'tag_id');
     }
 }
