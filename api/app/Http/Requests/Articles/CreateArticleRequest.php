@@ -24,8 +24,7 @@ class CreateArticleRequest extends FormRequest
         return [
             'title' => 'required|string',
             'content' => 'required|string',
-            'slug' => 'required|string',
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'nullable|integer|exists:categories,id',
             'user_id' => 'required|integer|exists:users,id',
         ];
     }

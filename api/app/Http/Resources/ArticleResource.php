@@ -18,6 +18,7 @@ class ArticleResource extends JsonResource
             'id' => $this->hash,
             'title' => $this->title,
             'content' => $this->content,
+            'slug' => $this->slug,
         ];
     }
 }
