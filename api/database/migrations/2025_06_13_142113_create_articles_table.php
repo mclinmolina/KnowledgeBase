@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->Text('content');
-            $table->unsignedBigInteger('category_id')
-                ->constrained('categories')
+            $table->string('slug')->unique();
+            $table->unsignedBigInteger('category_id')->nullable()
+                ->constrained()
                 ->onDelete('cascade');
             $table->foreignId('user_id')
-                ->constrained('users')
+                ->constrained()
                 ->onDelete('cascade');
             
             $table->softDeletes();
