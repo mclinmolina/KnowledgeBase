@@ -39,16 +39,18 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function updateArticle(UpdateArticleRequest $request, Article $article){
+    public function updateArticle(UpdateArticleRequest $request, String $article){
         $validated = $request->validated();
         $id = Article::hashToId($article);
+        $article = Article::findOrFail($id);
+
         $article->update([
-            'title' => $validated['title'],
+            'title' => $validated['title'], 
             'content' => $validated['content'],
         ]);
 
         return response([
-            'data' => ArticleResource::make($article),
+            'data' => new ArticleResource($article),
             'message' => "Article updated successfully",
         ]);
     }
