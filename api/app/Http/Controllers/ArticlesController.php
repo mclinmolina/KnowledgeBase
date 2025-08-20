@@ -24,9 +24,14 @@ class ArticlesController extends Controller
 
     public function createArticle(CreateArticleRequest $request) 
     {
-        $validated = $request->validated();
-        $article = Article::create($validated);
-        //return new ArticleResource($article);
+        $data = $request->validate([
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'category_id' => 'nullable|integer',
+            'user_id' => 'required|integer',
+        ]);
+        
+        $article = Article::create($data);
 
         return response()->json([
             'data' => new ArticleResource($article),
@@ -34,18 +39,19 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function updateArticle(UpdateArticleRequest $request, Article $article){
+    public function updateArticle(UpdateArticleRequest $request, String $article){
         $validated = $request->validated();
+        $id = Article::hashToId($article);
+        $article = Article::findOrFail($id);
 
         $article->update([
-            'title' => $validated['title'],
+            'title' => $validated['title'], 
             'content' => $validated['content'],
-            'slug' => $validated['slug'],
         ]);
 
         return response([
-            'data' => ArticleResource::make($article),
-            'message' => 'Article updated successfully',
+            'data' => new ArticleResource($article),
+            'message' => "Article updated successfully",
         ]);
     }
 

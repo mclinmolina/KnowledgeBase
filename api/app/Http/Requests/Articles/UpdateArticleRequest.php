@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Articles;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use App\Models\Article;
 class UpdateArticleRequest extends FormRequest
 {
     /**
@@ -22,11 +22,8 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'slug' => 'required|string',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'user_id' => 'nullable|integer|exists:users,id',
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
         ];
     }
 }
