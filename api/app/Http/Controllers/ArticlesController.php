@@ -11,6 +11,7 @@ use App\Http\Requests\Articles\UpdateArticleRequest;
 use App\Http\Requests\Articles\DeleteArticleRequest;
 use App\Http\Requests\Articles\RestoreArticleRequest;
 
+use Carbon\Carbon;
 class ArticlesController extends Controller
 {
     public function showArticles(Request $request)
@@ -24,14 +25,13 @@ class ArticlesController extends Controller
 
     public function createArticle(CreateArticleRequest $request) 
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'category_id' => 'nullable|integer',
-            'user_id' => 'required|integer',
+        $validated = $request->validated();
+        $article = Article::create([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'category_id' => $validated['category_id'],
+            'user_id' => $validated['user_id'],
         ]);
-        
-        $article = Article::create($data);
 
         return response()->json([
             'data' => new ArticleResource($article),
@@ -39,7 +39,7 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function updateArticle(UpdateArticleRequest $request, String $article){
+    public function updateArticle(UpdateArticleRequest $request, $article){
         $validated = $request->validated();
         $id = Article::hashToId($article);
         $article = Article::findOrFail($id);
@@ -55,23 +55,34 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function deleteArticle(Article $article){
-        $article = Article::withTrashed()->find($article->id);
-        if ($article && $article->trashed()) {
+    public function deleteArticle(DeleteArticleRequest $request, $article){
+        $id = Article::hashToId($article);
+        $request = Article::withTrashed()->find($id);
+        if ($request && $request->trashed()) {
             return response()->json(['message' => 'Article already deleted'], 400);
         }
-        $article->delete();
+        $request->delete();
         return response()->json(['message' => 'Article Deleted Successfully'], 200);
     }
 
-    public function restoreArticle($id){
-        $article = Article::withTrashed()->find($id);
+    public function restoreArticle(RestoreArticleRequest $request, $article){
+        $article = Article::hashToId($article);
+        $request = Article::withTrashed()->find($article);
 
-        if (!$article) {
+        if (!$request) {
             return response()->json(['message' => 'Article not found'], 404);
         }
 
-        $article->restore();
+        $request->restore();
         return response()->json(['message' => 'Article Restored Successfully'], 200);
+    }
+
+    public function publisher(Article $article){
+        if($article->published_at){
+            return response(["Article already published."]);
+        }
+        $article->published_at = Carbon::now();
+        $article->save();
+        return response(["Article has been published!"]);
     }
 }
