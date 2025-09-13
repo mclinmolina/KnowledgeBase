@@ -1,21 +1,33 @@
 import { ref } from 'vue'
 
-const user = ref(null)
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const user = ref<User | null>(null)
 const token = ref<string | null>(null)
 
 export function useAuth() {
   async function login(credentials: { email: string; password: string }) {
-    const { data } = await $fetch('/login', {
+    const response = await $fetch('/login', {
       baseURL: 'http://localhost:8000/api',
       method: 'POST',
       body: credentials
-    })
+    }) as { token: string; user: User }; // Type assertion for response
 
-    token.value = data.token
-    user.value = data.user
+    console.log('Login response:', response); // Log the response
 
-    // store in localStorage
-    localStorage.setItem('token', token.value)
+    token.value = response.token
+    user.value = response.user
+
+    console.log('User state after login:', user.value); // Log user state
+
+    // store in localStorage if token is not null
+    if (token.value) {
+      localStorage.setItem('token', token.value)
+    }
     localStorage.setItem('user', JSON.stringify(user.value))
   }
 
