@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::patch('articles/{hash}', [ArticlesController::class, 'updateArticle']);
     Route::delete('articles/{hash}', [ArticlesController::class, 'deleteArticle']);
     Route::put('articles/{hash}', [ArticlesController::class, 'restoreArticle']);
-    Route::post('publish-article/{hash}',[ArticlesController::class, 'publisher']);
+    Route::post('publish-article/{article}',[ArticlesController::class, 'publisher']);
 
     Route::post('category', [CategoriesController::class, 'createCategory']);
 
